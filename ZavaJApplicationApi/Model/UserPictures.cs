@@ -10,5 +10,8 @@ namespace ZavaJApplicationApi.Model
 
         [ForeignKey(nameof(UserId))]
         public User? User { get; set; }
+
+        public byte[]? ProfilePicture { get; set; }
+
     }
 }

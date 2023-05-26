@@ -6,80 +6,76 @@ namespace ZavaJApplicationApi.Model
     public class User
     {
         [Key]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
-        public string UserName { get; set; } = string.Empty;
+        public string? UserName { get; set; } = string.Empty;
 
-        public string Password { get; set; } = string.Empty;
+        public string? Password { get; set; } = string.Empty;
 
         // We can Set Gender bit for male /Female
-        public int Gender { get; set; }
+        public string? Gender { get; set; }
+        public double? Userlatitude { get; set; }
 
-        public double Userlatitude { get; set; }
+        public double? UserLongitude { get; set; }
 
-        public double UserLongitude { get; set; }
+        public string? ProfilePicture { get; set; }= string.Empty;
 
-        public Byte[]? ProfilePicture { get; set; }
+        public string? Selfie { get; set; }= string.Empty;
 
-        public Byte[]? Selfie { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
-        public int ProfessionId { get; set; }
+        public int? SectId { get; set; }
+        public int? ProfessionId { get; set; }
 
-        [ForeignKey(nameof(ProfessionId))]
-        public ProfessionList? ProfessionList { get; set; }
+        public int? EthnicGroupId { get; set; }
 
-        //Nationality
-        public int EthnicityId { get; set; }
+        public int? EducationLevelId { get; set; }
 
-        [ForeignKey(nameof(EthniCityList))]
-        public EthniCityList? EthniCityList { get; set; }
+        public int? PhoneNumber { get; set; }
 
-        public DateTime DateOfBirth { get; set; }
+        public bool? IsPhoneNumberVerfied { get; set; }
 
-        public DateTime CreateDateTime { get; set; } = DateTime.Now;    
+        public bool? IsEmailVerified { get; set; }
 
-        public DateTime Modified { get; set; }
+        public int? EthnicOrginId { get; set; }
 
-        public bool isActive { get; set; } = false;
+        public int? UserHeight { get; set; }
 
-        public int SectId { get; set; }
-
-        [ForeignKey(nameof(SectId))]
-        public SectList? SectList { get; set; }
-
-        public int MeritalStatusId { get; set; }
-
-        [ForeignKey(nameof(MeritalStatusId))]
-        public MeritalStatusList? MeritalStatusList { get; set; }
-
-        public int EducationId { get; set; }
-
-        [ForeignKey(nameof(EducationId))]
-        public EducationList? EducationList { get; set; }
+        public bool? IsMarried { get; set; } = false;
 
         public int PrayId { get; set; }
-        [ForeignKey(nameof(PrayId))]
-        public PrayList? PrayList { get; set; }
 
-        public int heightId { get; set; }
+        public bool? IsHaveChildren { get; set; } = false;
 
-        [ForeignKey(nameof(heightId))]
-        public HeightList? Height { get; set; }
+        public bool? IsSmoke { get; set; } = false;
 
-        public bool IsSmoke { get; set; } = false;
+        public bool? IsAlcohal { get; set; } = false;
 
-        public bool IsAlocahal { get; set; } = false;
-
-        public bool IsHaveChildren { get; set; } = false;
-
-        public int FutureChildrenId { get; set; }
-
-        [ForeignKey(nameof(FutureChildrenId))]
-        public FutureChildrenList? FutureChildren { get; set; }
+        public int? FutureChildrenId { get; set; }
 
 
-        public string Bio { get; set; } = string.Empty;
+        public string? Bio { get; set; }
+        public bool? IsWantToMoveAbroad { get; set; } = false;
 
-        public bool IsWantToMoveAbroad { get; set; } = false;
+        public string? InterestIds { get; set; }
+        public string? FoodBaverageIds { get; set; }
+
+        public string? PersonailityIds { get; set; }
+
+        public string? ProfilePictureFaceId { get; set; }
+
+        public bool IsSelfieVarified { get; set; } = false;
+        public int? MarriageStatusId { get; set; }
+        public string? ArtsCultureIds { get; set; }
+        public int RegisterationStepCompleted { get; set; } = 0;
+        public DateTime? CreateDateTime { get; set; } = DateTime.Now;    
+
+        public DateTime? Modified { get; set; }
+
+        public bool? isActive { get; set; } = false;
+
+        public int StepsCompleted { get; set; }
+
+
     }
 }

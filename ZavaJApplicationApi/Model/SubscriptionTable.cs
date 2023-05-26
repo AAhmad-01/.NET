@@ -15,7 +15,7 @@ namespace ZavaJApplicationApi.Model
         public int VipPlanId { get; set; }
 
         [ForeignKey(nameof(VipPlanId))]
-        public ZavajVipPlansTabls? ZavajVipPlans { get; set; }   [
+        public ZavajVipPlansTabls? ZavajVipPlans { get; set; }   
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }

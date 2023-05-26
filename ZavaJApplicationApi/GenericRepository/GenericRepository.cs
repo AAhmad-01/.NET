@@ -26,11 +26,9 @@ namespace ZavaJApplicationApi.GenericRepository
            return _dbSet.ToList();
         }
 
-        public T GetById(int id)
-        {
-         return  _dbSet.Find(id);
-        }
+        public T GetById(int id) => _dbSet.Find(id);
 
+        public T GetByEmail(string email) => _dbSet.Find(email);
         public void Insert(T entity)
         {
           _dbSet.Add(entity);
