@@ -36,6 +36,7 @@ namespace ZavaJApplicationApi.DAL
         public virtual DbSet<PrayLookupTable> PrayLookupTable { get; set; }
         public virtual DbSet<UserPictures> UserPictures { get; set; }
         public virtual DbSet<FutureChildrenStatusLookupTable> FutureChildrenStatusLookupTable { get; set; }
+        public virtual DbSet<MatchLevelLookUp> MatchLevelLookUpTable { get; set; }
 
     }
 

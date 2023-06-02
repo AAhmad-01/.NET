@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZavaJApplicationApi.DAL;
 
@@ -11,9 +12,11 @@ using ZavaJApplicationApi.DAL;
 namespace ZavaJApplicationApi.Migrations
 {
     [DbContext(typeof(IdentityDBContext))]
-    partial class IdentityDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230528173525_added matchlevel")]
+    partial class addedmatchlevel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -438,10 +441,6 @@ namespace ZavaJApplicationApi.Migrations
 
                     b.Property<int?>("EducationLevelId")
                         .HasColumnType("int");
-
-                    b.Property<string>("EmailAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("EthnicGroupId")
                         .HasColumnType("int");

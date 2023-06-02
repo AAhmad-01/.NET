@@ -21,4 +21,14 @@ namespace ZavaJApplicationApi.Model
         public int MatchLevelId { get; set; }
 
     }
+
+  public  class MatchLevelLookUp
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public string title { get; set; }
+
+
+    }
 }

@@ -15,6 +15,7 @@ namespace ContosoUniversity.DAL
         }
         private GenericRepository<User>? userRepository;
         private GenericRepository<OtpTable>? otpRepository;
+        private GenericRepository<MatchTable>? matchTableRepository;
 
         public GenericRepository<User> UserRepository
         {
@@ -39,6 +40,19 @@ namespace ContosoUniversity.DAL
                     this.otpRepository = new GenericRepository<OtpTable>(_dbContext);
                 }
                 return otpRepository;
+            }
+        }
+
+        public GenericRepository<MatchTable> MatchTableRepository
+        {
+            get
+            {
+
+                if (this.matchTableRepository == null)
+                {
+                    this.matchTableRepository = new GenericRepository<MatchTable>(_dbContext);
+                }
+                return matchTableRepository;
             }
         }
 

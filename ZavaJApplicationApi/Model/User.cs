@@ -36,7 +36,7 @@ namespace ZavaJApplicationApi.Model
         public bool? IsPhoneNumberVerfied { get; set; }
 
         public bool? IsEmailVerified { get; set; }
-
+        public string EmailAddress { get; set; } = string.Empty;
         public int? EthnicOrginId { get; set; }
 
         public int? UserHeight { get; set; }

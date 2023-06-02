@@ -5,10 +5,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 using Newtonsoft.Json;
+using System.Diagnostics;
 using System.Security.Claims;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Twilio.Rest.Api.V2010.Account;
@@ -87,13 +90,34 @@ namespace ZavaJApplicationApi.Controllers
         }
         [HttpPost]
         [Route("generateOtp")]
-        public IActionResult GenerateOTP(string email = "")
+        public async Task<IActionResult> GenerateOTP()
         {
             var commonClass = new CommonClass();
+          
+            // Read the form data
+            var formCollection = await Request.ReadFormAsync();
+
+            // Retrieve the value of the 'email' field from the form data
+            string email = formCollection["email"];
+            if (string.IsNullOrEmpty(email))
+            {
+                // Check if the email field is present in the request body
+                var emailField = formCollection.FirstOrDefault(field => field.Key.ToLower() == "email");
+                if (emailField.Equals(default(KeyValuePair<string, StringValues>)))
+                {
+                    return BadRequest("The 'email' field is missing.");
+                }
+                else
+                {
+                    email = emailField.Value;
+                }
+            }
+
             string generatedOtp = GenerateRandomOTP();
             ClaimsPrincipal currentUser = HttpContext.User;
+
             // Generate a random OTP
-            var otp = new OtpTable
+            var otpModel = new OtpTable
             {
                 email = email,
                 IsCodeVerified = false,
@@ -104,23 +128,7 @@ namespace ZavaJApplicationApi.Controllers
 
             try
             {
-                var message = new MimeMessage();
-                message.From.Add(new MailboxAddress("Zavaj Application", commonClass.zavajEmail));
-                message.To.Add(new MailboxAddress("Ammar", email));
-                message.Subject = commonClass.subject;
-                message.Body = new TextPart("plain")
-                {
-                    Text = commonClass.getEmailContent(generatedOtp, email)
-                };
-                using var client = new SmtpClient();
-                client.Connect("smtpout.secureserver.net", 465, true);
-                client.Authenticate(commonClass.zavajEmail, commonClass.password);
-                client.Send(message);
-                client.Disconnect(true);
-                _unitOfWork.OtpRepository.Insert(otp);
-                _dbContext.Add(otp);
-                _dbContext.SaveChanges();
-
+                _unitOfWork.OtpRepository.Insert(otpModel);
                 return Ok(true);
             }
             catch (Exception ex)
@@ -130,6 +138,17 @@ namespace ZavaJApplicationApi.Controllers
             }
         }
 
+        bool isEmailOtpVerified(string userEmail,int otp )
+        {
+            var currentDateTimeUtc = DateTime.UtcNow;
+            var   userOTP = _dbContext.OtpTable.FirstOrDefault(o => o.email == userEmail && o.OtpCode == otp && o.ExpirationTime > currentDateTimeUtc);
+                if(userOTP != null)
+                {
+                    return true;
+                }
+                return false;
+            
+        }
 
         [HttpPost]
         [Route("verifyOtp")]
@@ -166,29 +185,56 @@ namespace ZavaJApplicationApi.Controllers
         [HttpPost]
         [Route("registerationStep1")]
 
-        public IActionResult RegisterationStepOne(string gender, string name, string dateOfBirh, int otpCode) {
-
-            /*UserManager userManager = new UserManager();
-             User user = userManager.CreateUser("John Doe");*/
-
-            try
+        public async Task<IActionResult> RegisterationStepOneAsync() {
+              var formCollection = await Request.ReadFormAsync();
+                  var  gender = formCollection.FirstOrDefault(field => field.Key.ToLower() == "gender");
+            var name = formCollection.FirstOrDefault(field => field.Key.ToLower() == "name");
+            var dateOfBirth = formCollection.FirstOrDefault(field => field.Key.ToLower() == "dob");
+            var otp = formCollection.FirstOrDefault(field => field.Key.ToLower() == "otp");
+            var currentUserEmail = formCollection.FirstOrDefault(field => field.Key.ToLower() == "email");
+            if (gender.Equals(default(KeyValuePair<string, StringValues>)))
+                {
+                    return BadRequest("The 'gender' field is missing.");
+                }
+            if (name.Equals(default(KeyValuePair<string, StringValues>)))
             {
-                /* user.Id = Guid.NewGuid(),*/
-                DateTime dOB = DateTime.ParseExact(dateOfBirh, "dd/MM/yyyy", null); ;
-                user.Gender = gender;
-                user.UserName = name;
-                user.DateOfBirth = dOB;
-                user.StepsCompleted = 1;
-                _unitOfWork.UserRepository.Insert(user);
-                _dbContext.Add(user);
-                _dbContext.SaveChanges();
-                return Ok(true);
+                return BadRequest("The 'name' field is missing.");
             }
-            catch (Exception ex)
+            if (dateOfBirth.Equals(default(KeyValuePair<string, StringValues>)))
             {
-                Console.WriteLine(ex.Message.ToString());
-                throw;
+                return BadRequest("The 'Date of Birth' field is missing.");
             }
+            if (otp.Equals(default(KeyValuePair<string, StringValues>)))
+            {
+                return BadRequest("The 'Otp' field is missing.");
+            }
+            if(isEmailOtpVerified(currentUserEmail.Value, int.Parse(otp.Value)))
+            {
+                try
+                {
+                    /* user.Id = Guid.NewGuid(),*/
+                    DateTime dOB = DateTime.ParseExact(dateOfBirth.Value, "dd/MM/yyyy", null); ;
+                    user.Gender = gender.Value;
+                    user.UserName = name.Value;
+                    user.DateOfBirth = dOB;
+                    user.StepsCompleted = 1;
+                    user.EmailAddress = currentUserEmail.Value;
+                    user.IsEmailVerified = true;
+                    _unitOfWork.UserRepository.Insert(user);
+                    _unitOfWork.Save(); ;
+                    return Ok(true);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message.ToString());
+                    return BadRequest(ex.Message);
+
+                }
+            }
+
+            return BadRequest("Email not Verified");
+
+
         }
         [HttpPost]
         [Route("registerationStep2")]
